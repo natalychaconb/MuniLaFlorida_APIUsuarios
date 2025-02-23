@@ -23,6 +23,8 @@ pipeline {
         }
         stage('Deployment') {
             steps {
+                sh 'docker stop contenedor_munilaflorida'
+                sh 'docker rm contenedor_munilaflorida'  
                 sh 'docker run -d -p 9091:8080 --name contenedor_munilaflorida imagen_usuarios'
             }
         }
