@@ -1,0 +1,30 @@
+pipeline {
+    agent any
+
+    tools{
+        maven 'M3'
+    }
+
+    stages {
+        stage('Git Clone') {
+            steps {
+                checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[credentialsId: 'Webhook_Nataly', url: 'https://github.com/natalychaconb/MuniLaFlorida_APIUsuarios']])
+            }
+        }
+        stage('Build Aplication - Maven') {
+            steps {
+                sh 'mvn package'
+            }
+        }
+        stage('Docker Image') {
+            steps {
+                sh 'docker build -t imagen_usuarios .'
+            }
+        }
+        stage('Deployment') {
+            steps {
+                sh 'docker run -d -p 9090:8080 --name contenedor_munilaflorida imagen_usuarios'
+            }
+        }
+    }
+}
